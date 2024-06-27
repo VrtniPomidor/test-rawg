@@ -12,7 +12,6 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
-secrets.defaults.properties
 
 # Log/OS Files
 *.log
@@ -43,3 +42,6 @@ google-services.json
 
 # Windows thumbnail db
 .DS_Store
+
+# Kotlin 2.0
+.kotlin
