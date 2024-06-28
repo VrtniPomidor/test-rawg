@@ -1,5 +1,13 @@
 # Gradle files
-.gradle/
+.gradle
+
+# files for the dex VM
+*.dex
+
+# generated files
+bin/
+gen/
+out/
 build/
 
 # Local configuration file (sdk path, etc)
@@ -31,3 +39,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Windows thumbnail db
+.DS_Store
+
+# Kotlin 2.0
+.kotlin
