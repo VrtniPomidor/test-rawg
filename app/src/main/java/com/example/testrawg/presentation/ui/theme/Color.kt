@@ -1,4 +1,4 @@
-package com.example.testrawg.ui.theme
+package com.example.testrawg.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
