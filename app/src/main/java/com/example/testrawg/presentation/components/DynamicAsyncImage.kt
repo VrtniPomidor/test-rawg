@@ -50,7 +50,7 @@ fun DynamicAsyncImage(
             )
         }
         Image(
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             painter = if (isError.not()) imageLoader else placeholder,
             contentDescription = contentDescription,
         )

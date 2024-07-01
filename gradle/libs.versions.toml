@@ -15,6 +15,7 @@ okhttpBom = "4.12.0"
 retrofit = "2.11.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 room = "2.6.1"
+androidxDataStore = "1.1.1"
 secrets = "2.0.1"
 hilt = "2.51.1"
 ksp = "2.0.0-1.0.21"
@@ -30,6 +31,7 @@ coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-dataStore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

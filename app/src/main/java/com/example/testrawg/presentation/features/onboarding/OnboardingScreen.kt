@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,23 +19,20 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.testrawg.R
+import com.example.testrawg.domain.model.Genre
 import com.example.testrawg.presentation.components.CustomIconToggleButton
 import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.ErrorView
@@ -52,74 +48,92 @@ fun OnboardingScreen(
 ) {
     val viewModel: OnboardingViewModel = hiltViewModel()
     val genresState by viewModel.genresState.collectAsStateWithLifecycle()
-
+    val isFinishEnabled by viewModel.isFinishEnabled.collectAsStateWithLifecycle()
     OnboardingContent(
         genresState = genresState,
         onGenreSelect = viewModel::onGenreSelect,
-        onFinishOnboarding = onFinishOnboarding
+        isFinishEnabled = isFinishEnabled,
+        onFinishOnboarding = {
+            viewModel.onFinishOnboarding()
+            onFinishOnboarding()
+        }
     )
 }
 
 @Composable
 fun OnboardingContent(
     genresState: OnboardingState,
+    isFinishEnabled: Boolean,
     onGenreSelect: (Int, Boolean) -> Unit,
-    onFinishOnboarding: () -> Unit
+    onFinishOnboarding: () -> Unit,
 ) {
-    val state = rememberLazyStaggeredGridState()
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Select categories You are interested in")
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center,
-        ) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(300.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalItemSpacing = 8.dp,
-                state = state,
-            ) {
-                when (genresState) {
-                    OnboardingState.Error -> item(span = StaggeredGridItemSpan.FullLine) {
-                        ErrorView()
-                    }
+        when (genresState) {
+            OnboardingState.Error -> {
+                ErrorView(retry = {})
+            }
 
-                    OnboardingState.Loading -> item(span = StaggeredGridItemSpan.FullLine) {
-                        LoadingIndicator()
-                    }
+            OnboardingState.Loading -> {
+                LoadingIndicator()
+            }
 
-                    is OnboardingState.Success -> {
-                        genresState.genres.forEach { genre ->
-                            item(key = genre.id) {
-                                GenresCard(
-                                    name = genre.name,
-                                    imageUrl = genre.imageBackground,
-                                    isFollowing = false,
-                                    isSelected = false,
-                                    onGenreSelect = { onGenreSelect(genre.id, it) }
-                                )
-                            }
-                        }
-                    }
+            is OnboardingState.Success -> {
+                Text(
+                    "Select categories You are interested in",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    GenresList(genres = genresState.genres, onGenreSelect = onGenreSelect)
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .widthIn(max = 364.dp)
+                        .fillMaxWidth(),
+                    enabled = isFinishEnabled,
+                    onClick = onFinishOnboarding,
+                ) {
+                    Text("Finish")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .widthIn(max = 364.dp)
-                .fillMaxWidth(), onClick = onFinishOnboarding
-        ) {
-            Text("Finish")
+    }
+}
+
+@Composable
+private fun GenresList(
+    genres: List<Genre>,
+    onGenreSelect: (Int, Boolean) -> Unit,
+) {
+    val state = rememberLazyStaggeredGridState()
+
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(300.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 8.dp,
+        state = state,
+    ) {
+        genres.forEach { genre ->
+            item(key = genre.id) {
+                GenresCard(
+                    name = genre.name,
+                    imageUrl = genre.imageBackground,
+                    isFollowing = genre.isFollowed,
+                    onGenreSelect = { onGenreSelect(genre.id, it) }
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -129,7 +143,6 @@ private fun GenresCard(
     name: String,
     imageUrl: String,
     isFollowing: Boolean,
-    isSelected: Boolean = false,
     onGenreSelect: (Boolean) -> Unit,
 ) {
     ListItem(
@@ -166,16 +179,6 @@ private fun GenresCard(
                 },
             )
         },
-        colors = ListItemDefaults.colors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.surfaceVariant
-            } else {
-                Color.Transparent
-            },
-        ),
         modifier = modifier
-            .semantics(mergeDescendants = true) {
-                selected = isSelected
-            }
     )
 }

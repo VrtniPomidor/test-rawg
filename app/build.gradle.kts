@@ -105,6 +105,7 @@ dependencies {
     // Database
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.dataStore)
 
     // Test
     testImplementation(libs.junit)

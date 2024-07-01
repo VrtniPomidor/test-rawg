@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 private interface RetrofitNetworkApi {
     @GET(value = "genres")
-    suspend fun getGenres(): PagingResponse<GenresResponse>
+    suspend fun getNetworkGenres(): PagingResponse<GenresResponse>
 }
 
 @Singleton
@@ -33,8 +33,8 @@ class RetrofitNetwork @Inject constructor(
             .build()
             .create(RetrofitNetworkApi::class.java)
 
-    override suspend fun getGenres(): PagingResponse<GenresResponse> {
-        return networkApi.getGenres()
+    override suspend fun getNetworkGenres(): PagingResponse<GenresResponse> {
+        return networkApi.getNetworkGenres()
     }
 }
 

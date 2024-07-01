@@ -1,13 +1,15 @@
 package com.example.testrawg.domain.repository
 
+import kotlinx.coroutines.flow.Flow
+
 interface UserDataRepository {
     /**
-     * Checks whether the user has completed the onboarding process.
+     * Observe whether the user has completed the onboarding process.
      */
-    suspend fun shouldShowOnboarding(): Boolean
+    val shouldShowOnboarding: Flow<Boolean>
 
     /**
      * Sets whether the user has completed the onboarding process.
      */
-    suspend fun setShouldHideOnboarding(shouldHideOnboarding: Boolean)
+    suspend fun setShouldShowOnboarding(shouldShowOnboarding: Boolean)
 }

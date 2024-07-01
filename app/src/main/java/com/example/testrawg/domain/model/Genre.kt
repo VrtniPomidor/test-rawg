@@ -5,5 +5,6 @@ data class Genre(
     val name: String,
     val slug: String,
     val gamesCount: Int,
-    val imageBackground: String
+    val imageBackground: String,
+    val isFollowed: Boolean = false,
 )
