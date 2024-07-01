@@ -72,7 +72,7 @@ fun OnboardingContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         when (genresState) {
             OnboardingState.Error -> {
                 ErrorView(retry = {})
@@ -105,7 +105,7 @@ fun OnboardingContent(
                 ) {
                     Text("Finish")
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
