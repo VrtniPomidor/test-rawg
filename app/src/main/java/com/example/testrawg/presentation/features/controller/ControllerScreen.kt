@@ -32,6 +32,7 @@ fun ControllerContent(
     showOnboarding: () -> Unit,
     showGamesList: () -> Unit
 ) {
+    // Keep showing loading indicator until screen is removed
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

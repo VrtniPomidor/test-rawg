@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class UserDataRepositoryImpl @Inject constructor() : UserDataRepository {
     override suspend fun shouldShowOnboarding(): Boolean {
-        delay(5000)
+        delay(2000)
         return true
     }
 

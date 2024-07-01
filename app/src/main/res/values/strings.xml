@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">testrawg</string>
+    <string name="app_name">Game Library</string>
+
+    <!--  Content Description  -->
+    <string name="genres_follow_button_content_desc">Follow genre</string>
+    <string name="genres_unfollow_button_content_desc">Unfollow genre</string>
 </resources>

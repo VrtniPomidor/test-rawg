@@ -10,7 +10,7 @@ import javax.inject.Qualifier
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object DispatchersModule {
+object DispatchersModule {
     @Provides
     @Dispatcher(RawgDispatchers.IO)
     fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
