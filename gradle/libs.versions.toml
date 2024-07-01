@@ -1,5 +1,6 @@
 [versions]
 agp = "8.4.2"
+coil = "2.6.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -14,6 +15,7 @@ okhttpBom = "4.12.0"
 retrofit = "2.11.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 room = "2.6.1"
+androidxDataStore = "1.1.1"
 secrets = "2.0.1"
 hilt = "2.51.1"
 ksp = "2.0.0-1.0.21"
@@ -25,7 +27,11 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-dataStore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -52,6 +58,7 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 
 [bundles]
 room = ["androidx-room-runtime", "room-ktx"]
+coil = ["coil-kt", "coil-kt-compose", "coil-kt-svg"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

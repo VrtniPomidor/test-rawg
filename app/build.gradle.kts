@@ -67,6 +67,7 @@ composeCompiler {
 }
 
 secrets {
+    propertiesFileName = "secrets.properties"
     defaultPropertiesFileName = "secrets.defaults.properties"
 }
 
@@ -99,10 +100,12 @@ dependencies {
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+    implementation(libs.bundles.coil)
 
     // Database
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.dataStore)
 
     // Test
     testImplementation(libs.junit)

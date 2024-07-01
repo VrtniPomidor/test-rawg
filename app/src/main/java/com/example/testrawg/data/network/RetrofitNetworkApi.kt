@@ -1,34 +1,41 @@
 package com.example.testrawg.data.network
 
 import com.example.testrawg.BuildConfig
+import com.example.testrawg.data.model.GenresResponse
+import com.example.testrawg.data.model.PagingResponse
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import retrofit2.http.GET
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class RetrofitRawgNetworkApi {
+private interface RetrofitNetworkApi {
+    @GET(value = "genres")
+    suspend fun getNetworkGenres(): PagingResponse<GenresResponse>
 }
 
 @Singleton
-internal class RetrofitRawgNetwork @Inject constructor(
+class RetrofitNetwork @Inject constructor(
     networkJson: Json,
     okhttpCallFactory: dagger.Lazy<Call.Factory>,
-) : RawgNetworkDataSource {
+) : NetworkDataSource {
 
     private val networkApi =
         Retrofit.Builder()
             .baseUrl(RAWG_BASE_URL)
-            // We use callFactory lambda here with dagger.Lazy<Call.Factory>
-            // to prevent initializing OkHttp on the main thread.
             .callFactory { okhttpCallFactory.get().newCall(it) }
             .addConverterFactory(
                 networkJson.asConverterFactory("application/json".toMediaType()),
             )
             .build()
-            .create(RetrofitRawgNetworkApi::class.java)
+            .create(RetrofitNetworkApi::class.java)
+
+    override suspend fun getNetworkGenres(): PagingResponse<GenresResponse> {
+        return networkApi.getNetworkGenres()
+    }
 }
 
 private const val RAWG_BASE_URL = BuildConfig.BACKEND_URL
