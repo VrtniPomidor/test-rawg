@@ -8,8 +8,11 @@ import com.example.testrawg.domain.repository.GenresRepository
 import com.example.testrawg.domain.repository.UserDataRepository
 import com.example.testrawg.domain.usecase.GetGenresUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -17,26 +20,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    genresUseCase: GetGenresUseCase,
+    getGenresUseCase: GetGenresUseCase,
     private val genresRepository: GenresRepository,
     private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
-    val genresState: StateFlow<OnboardingState> =
-        genresUseCase()
-            .asResult()
-            .map { genresResult ->
-                when (genresResult) {
-                    is Result.Success -> OnboardingState.Success(genresResult.data)
+    private val refresh = MutableStateFlow(false)
 
-                    is Result.Loading -> OnboardingState.Loading
-                    is Result.Error -> OnboardingState.Error
+    init {
+        getGenres()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val genresUiState: StateFlow<OnboardingState> = refresh
+        .flatMapLatest {
+            getGenresUseCase()
+                .asResult()
+                .map { genresResult ->
+                    when (genresResult) {
+                        is Result.Success -> OnboardingState.Success(genresResult.data)
+
+                        is Result.Loading -> OnboardingState.Loading
+                        is Result.Error -> OnboardingState.Error
+                    }
                 }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = OnboardingState.Loading,
-            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = OnboardingState.Loading,
+        )
+
 
     val isFinishEnabled: StateFlow<Boolean> =
         genresRepository.getFollowedGenres().map { it.isNotEmpty() }
@@ -45,6 +57,12 @@ class OnboardingViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = false,
             )
+
+    fun getGenres() {
+        viewModelScope.launch {
+            refresh.emit(!refresh.value)
+        }
+    }
 
     fun onGenreSelect(genreId: Int, isFollowing: Boolean) {
         viewModelScope.launch {
