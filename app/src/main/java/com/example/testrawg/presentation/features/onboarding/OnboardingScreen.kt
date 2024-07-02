@@ -5,21 +5,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,21 +28,26 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.testrawg.R
 import com.example.testrawg.domain.model.Genre
+import com.example.testrawg.presentation.components.AdaptiveButton
 import com.example.testrawg.presentation.components.CustomIconToggleButton
 import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.ErrorView
 import com.example.testrawg.presentation.components.LoadingIndicator
+import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.Onboarding
 
-fun NavController.navigateToOnboardingScreen(navOptions: NavOptions) =
-    navigate(Onboarding, navOptions)
+fun NavController.navigateToOnboardingScreen(navOptions: NavOptions? = null) =
+    navigate(Onboarding(isOnboarding = true), navOptions)
+
+fun NavController.navigateToGenreSettingsScreen(navOptions: NavOptions? = null) =
+    navigate(Onboarding(isOnboarding = false), navOptions)
 
 @Composable
 fun OnboardingScreen(
     onFinishOnboarding: () -> Unit
 ) {
     val viewModel: OnboardingViewModel = hiltViewModel()
-    val genresState by viewModel.genresState.collectAsStateWithLifecycle()
+    val genresState by viewModel.genresUiState.collectAsStateWithLifecycle()
     val isFinishEnabled by viewModel.isFinishEnabled.collectAsStateWithLifecycle()
     OnboardingContent(
         genresState = genresState,
@@ -56,7 +56,8 @@ fun OnboardingScreen(
         onFinishOnboarding = {
             viewModel.onFinishOnboarding()
             onFinishOnboarding()
-        }
+        },
+        onRetry = viewModel::getGenres
     )
 }
 
@@ -66,6 +67,7 @@ fun OnboardingContent(
     isFinishEnabled: Boolean,
     onGenreSelect: (Int, Boolean) -> Unit,
     onFinishOnboarding: () -> Unit,
+    onRetry: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -75,7 +77,7 @@ fun OnboardingContent(
         Spacer(modifier = Modifier.height(16.dp))
         when (genresState) {
             OnboardingState.Error -> {
-                ErrorView(retry = {})
+                ErrorView(retry = onRetry)
             }
 
             OnboardingState.Loading -> {
@@ -83,10 +85,7 @@ fun OnboardingContent(
             }
 
             is OnboardingState.Success -> {
-                Text(
-                    "Select categories You are interested in",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                TitleBar(stringResource(R.string.select_genres_you_are_interested_in_title))
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
                     modifier = Modifier.weight(1f),
@@ -95,15 +94,8 @@ fun OnboardingContent(
                     GenresList(genres = genresState.genres, onGenreSelect = onGenreSelect)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .widthIn(max = 364.dp)
-                        .fillMaxWidth(),
-                    enabled = isFinishEnabled,
-                    onClick = onFinishOnboarding,
-                ) {
-                    Text("Finish")
+                AdaptiveButton(isEnabled = isFinishEnabled, onClick = onFinishOnboarding) {
+                    Text(stringResource(id = R.string.done_button))
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }

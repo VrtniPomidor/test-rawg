@@ -4,4 +4,15 @@
     <!--  Content Description  -->
     <string name="genres_follow_button_content_desc">Follow genre</string>
     <string name="genres_unfollow_button_content_desc">Unfollow genre</string>
+    <string name="arrow_back_content_desc">Navigate Back</string>
+    <string name="settings_icon_content_description">Go to Settings Screen</string>
+
+    <!--  Resources  -->
+    <string name="done_button">Done</string>
+    <string name="settings_screen_title">Settings Screen</string>
+    <string name="select_genres_you_are_interested_in_title">Select genres You are interested in</string>
+    <string name="something_went_wrong_title">Something went wrong!</string>
+    <string name="retry_button_text">Retry</string>
+    <string name="reset_onboarding_button_text">Reset Onboarding</string>
+    <string name="games_list_title">Games List</string>
 </resources>

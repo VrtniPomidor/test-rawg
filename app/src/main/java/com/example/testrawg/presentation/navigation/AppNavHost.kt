@@ -5,12 +5,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import androidx.navigation.toRoute
 import com.example.testrawg.presentation.features.controller.ControllerScreen
 import com.example.testrawg.presentation.features.gamedetails.GameDetailsScreen
 import com.example.testrawg.presentation.features.gamedetails.navigateToGameDetails
 import com.example.testrawg.presentation.features.gamelist.GameListScreen
 import com.example.testrawg.presentation.features.gamelist.navigateToGameListScreen
 import com.example.testrawg.presentation.features.onboarding.OnboardingScreen
+import com.example.testrawg.presentation.features.onboarding.navigateToGenreSettingsScreen
 import com.example.testrawg.presentation.features.onboarding.navigateToOnboardingScreen
 import com.example.testrawg.presentation.features.settings.SettingsScreen
 import com.example.testrawg.presentation.features.settings.navigateToSettingsScreen
@@ -35,14 +37,19 @@ fun AppNavHost() {
                 }
             )
         }
-        composable<Onboarding> {
+        composable<Onboarding> { backStackEntry ->
+            val args: Onboarding = backStackEntry.toRoute()
             OnboardingScreen(
                 onFinishOnboarding = {
-                    navController.navigateToGameListScreen(navOptions = navOptions {
-                        popUpTo(Onboarding) {
-                            inclusive = true
-                        }
-                    })
+                    if (args.isOnboarding) {
+                        navController.navigateToGameListScreen(navOptions = navOptions {
+                            popUpTo(args) {
+                                inclusive = true
+                            }
+                        })
+                    } else {
+                        navController.navigateUp()
+                    }
                 }
             )
         }
@@ -56,7 +63,9 @@ fun AppNavHost() {
             GameDetailsScreen(onBackClicked = { navController.navigateUp() })
         }
         composable<Settings> {
-            SettingsScreen(onBackClicked = { navController.navigateUp() })
+            SettingsScreen(
+                onShowGenres = { navController.navigateToGenreSettingsScreen() },
+                onBackClicked = { navController.navigateUp() })
         }
     }
 }
@@ -65,7 +74,9 @@ fun AppNavHost() {
 object Controller
 
 @Serializable
-object Onboarding
+data class Onboarding(
+    val isOnboarding: Boolean
+)
 
 @Serializable
 object GameList
