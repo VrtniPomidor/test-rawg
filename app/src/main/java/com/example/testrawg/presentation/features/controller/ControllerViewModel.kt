@@ -19,7 +19,7 @@ class ControllerViewModel @Inject constructor(
             .map { ControllerState.Data(it) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                started = SharingStarted.WhileSubscribed(5000),
                 initialValue = ControllerState.Loading,
             )
 }

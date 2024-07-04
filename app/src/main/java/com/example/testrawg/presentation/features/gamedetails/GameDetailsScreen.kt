@@ -12,11 +12,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.testrawg.presentation.navigation.GameDetails
 
-fun NavController.navigateToGameDetails(navOptions: NavOptions? = null) =
-    navigate(GameDetails, navOptions)
+fun NavController.navigateToGameDetails(gameId: Int, navOptions: NavOptions? = null) =
+    navigate(GameDetails(gameId), navOptions)
 
 @Composable
 fun GameDetailsScreen(
+    gameId: Int,
     onBackClicked: () -> Unit
 ) {
     Column(

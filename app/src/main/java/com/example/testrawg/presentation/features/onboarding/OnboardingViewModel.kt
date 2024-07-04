@@ -45,7 +45,7 @@ class OnboardingViewModel @Inject constructor(
                 }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = OnboardingState.Loading,
         )
 
@@ -54,7 +54,7 @@ class OnboardingViewModel @Inject constructor(
         genresRepository.getFollowedGenres().map { it.isNotEmpty() }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                started = SharingStarted.WhileSubscribed(5000),
                 initialValue = false,
             )
 

@@ -24,7 +24,7 @@ class SettingsViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = SettingsState(),
     )
 

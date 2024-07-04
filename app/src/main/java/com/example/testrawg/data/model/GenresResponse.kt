@@ -13,9 +13,9 @@ data class GenresResponse(
     @SerialName("slug")
     val slug: String,
     @SerialName("games_count")
-    val gamesCount: Int,
+    val gamesCount: Int? = null,
     @SerialName("image_background")
-    val imageBackground: String
+    val imageBackground: String? = null
 )
 
 fun GenresResponse.toModel(): Genre {
@@ -23,7 +23,7 @@ fun GenresResponse.toModel(): Genre {
         id = id,
         name = name,
         slug = slug,
-        gamesCount = gamesCount,
-        imageBackground = imageBackground
+        gamesCount = gamesCount ?: 0,
+        imageBackground = imageBackground ?: ""
     )
 }

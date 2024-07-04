@@ -18,6 +18,7 @@ import com.example.testrawg.R
 @Composable
 fun ErrorView(
     modifier: Modifier = Modifier,
+    errorMessage: String = stringResource(R.string.something_went_wrong_title),
     retry: () -> Unit
 ) {
     Column(
@@ -26,7 +27,7 @@ fun ErrorView(
             .heightIn(min = 240.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(stringResource(R.string.something_went_wrong_title))
+        Text(errorMessage)
         Spacer(modifier = Modifier.height(8.dp))
         Button(modifier = Modifier.widthIn(min = 160.dp), onClick = retry) {
             Text(stringResource(R.string.retry_button_text))

@@ -55,12 +55,13 @@ fun AppNavHost() {
         }
         composable<GameList> {
             GameListScreen(
-                onGameDetailsClicked = { navController.navigateToGameDetails() },
+                onGameDetailsClicked = { navController.navigateToGameDetails(it) },
                 onSettingsClicked = { navController.navigateToSettingsScreen() }
             )
         }
-        composable<GameDetails> {
-            GameDetailsScreen(onBackClicked = { navController.navigateUp() })
+        composable<GameDetails> { backStackEntry ->
+            val args: GameDetails = backStackEntry.toRoute()
+            GameDetailsScreen(args.gameId, onBackClicked = { navController.navigateUp() })
         }
         composable<Settings> {
             SettingsScreen(
@@ -82,7 +83,9 @@ data class Onboarding(
 object GameList
 
 @Serializable
-object GameDetails
+data class GameDetails(
+    val gameId: Int,
+)
 
 @Serializable
 object Settings

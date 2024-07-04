@@ -28,7 +28,7 @@ class GenresRepositoryImpl @Inject constructor(
 
     override fun getGenres(): Flow<List<Genre>> {
         return flow {
-            emit(networkDataSource.getNetworkGenres().results.map { it.toModel() })
+            emit(networkDataSource.getGenresNetwork().results.map { it.toModel() })
         }.flowOn(ioDispatcher)
     }
 
