@@ -8,29 +8,33 @@ import androidx.paging.cachedIn
 import com.example.testrawg.domain.model.Game
 import com.example.testrawg.domain.repository.GamesRepository
 import com.example.testrawg.domain.repository.GenresRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class GameListViewModel @Inject constructor(
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@HiltViewModel(assistedFactory = GameListViewModel.Factory::class)
+class GameListViewModel @AssistedInject constructor(
+    genresRepository: GenresRepository,
+    @Assisted debounceMs: Long = 300,
     private val gamesRepository: GamesRepository,
-    private val genresRepository: GenresRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val state: StateFlow<UiState>
 
@@ -43,49 +47,37 @@ class GameListViewModel @Inject constructor(
 
     init {
         val initialQuery: String = savedStateHandle[LAST_SEARCH_QUERY] ?: DEFAULT_QUERY
-        val lastQueryScrolled: String = savedStateHandle[LAST_QUERY_SCROLLED] ?: DEFAULT_QUERY
 
         val actionStateFlow = MutableSharedFlow<UiAction>()
+        val showSearch = actionStateFlow
+            .filterIsInstance<UiAction.ShowSearch>()
+            .distinctUntilChanged()
+            .onStart { emit(UiAction.ShowSearch(showSearch = false)) }
+
         val searches = actionStateFlow
             .filterIsInstance<UiAction.Search>()
             .distinctUntilChanged()
             .onStart { emit(UiAction.Search(query = initialQuery)) }
 
-        val queriesScrolled = actionStateFlow
-            .filterIsInstance<UiAction.Scroll>()
-            .distinctUntilChanged()
-            // This is shared to keep the flow "hot" while caching the last query scrolled,
-            // otherwise each flatMapLatest invocation would lose the last query scrolled,
-            .shareIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                replay = 1
-            )
-            .onStart { emit(UiAction.Scroll(currentQuery = lastQueryScrolled)) }
-
         pagingDataFlow = combine(
             searches,
             genresRepository.getFollowedGenres(),
             ::Pair
-        )
-            .flatMapLatest { (action, genres) ->
-                getGames(
-                    queryString = action.query,
-                    genres = genres
-                )
-            }
-            .cachedIn(viewModelScope)
+        ).debounce(debounceMs).flatMapLatest { (action, genres) ->
+            getGames(
+                queryString = action.query,
+                genres = genres
+            )
+        }.cachedIn(viewModelScope)
 
         state = combine(
             searches,
-            queriesScrolled,
+            showSearch,
             ::Pair
-        ).map { (search, scroll) ->
+        ).map { (search, show) ->
             UiState(
                 query = search.query,
-                lastQueryScrolled = scroll.currentQuery,
-                // If the search query matches the scroll query, the user has scrolled
-                hasNotScrolledForCurrentSearch = search.query != scroll.currentQuery
+                isSearchVisible = show.showSearch
             )
         }.stateIn(
             scope = viewModelScope,
@@ -103,10 +95,13 @@ class GameListViewModel @Inject constructor(
 
     override fun onCleared() {
         savedStateHandle[LAST_SEARCH_QUERY] = state.value.query
-        savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
         super.onCleared()
+    }
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(debounceMs: Long): GameListViewModel
     }
 }
 
-private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"
 private const val LAST_SEARCH_QUERY: String = "last_search_query"

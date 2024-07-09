@@ -13,7 +13,7 @@ data class GamesResponse(
     @SerialName("slug")
     val slug: String,
     @SerialName("background_image")
-    val imageBackground: String,
+    val imageBackground: String? = null,
     @SerialName("genres")
     val genres: List<GenresResponse>
 )
@@ -23,7 +23,7 @@ fun GamesResponse.toModel(): Game {
         id = id,
         name = name,
         slug = slug,
-        imageBackground = imageBackground,
+        imageBackground = imageBackground ?: "",
         genres = genres.map { it.toModel() }
     )
 }

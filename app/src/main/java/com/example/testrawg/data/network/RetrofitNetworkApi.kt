@@ -21,6 +21,7 @@ private interface RetrofitNetworkApi {
     @GET(value = "games")
     suspend fun getGamesListNetwork(
         @Query("search") search: String? = null,
+        @Query("search_precise") searchPrecise: Boolean = true,
         @Query("genres") genres: String? = null,
         @Query("page") page: Int = 1,
         @Query("page_size") pageSize: Int = 20,
@@ -56,7 +57,7 @@ class RetrofitNetwork @Inject constructor(
             search = search,
             genres = genres,
             page = page,
-            pageSize = pageSize
+            pageSize = pageSize,
         )
     }
 }

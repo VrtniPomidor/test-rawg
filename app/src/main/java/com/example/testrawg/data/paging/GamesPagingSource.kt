@@ -25,7 +25,7 @@ class GamesPagingSource(
                 pageSize = params.loadSize,
             )
             val games = response.results
-            val nextKey = if (games.isEmpty()) {
+            val nextKey = if (games.isEmpty() || response.next.isNullOrEmpty()) {
                 null
             } else {
                 // initial load size = 3 * NETWORK_PAGE_SIZE
