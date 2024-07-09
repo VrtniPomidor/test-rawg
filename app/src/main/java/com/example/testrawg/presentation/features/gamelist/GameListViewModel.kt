@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = GameListViewModel.Factory::class)
 class GameListViewModel @AssistedInject constructor(
     genresRepository: GenresRepository,
-    @Assisted debounceMs: Long = 300,
+    @Assisted debounceMs: Long,
     private val gamesRepository: GamesRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {

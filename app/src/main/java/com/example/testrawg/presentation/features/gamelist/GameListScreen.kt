@@ -52,11 +52,14 @@ import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.GameList
 import kotlinx.coroutines.launch
 
+private const val DEBOUNCE_DEFAULT = 500L
+private const val SHOW_TOP_AT_INDEX = 4
+
 fun NavController.navigateToGameListScreen(navOptions: NavOptions) = navigate(GameList, navOptions)
 
 @Composable
 fun GameListScreen(
-    searchDebounce: Long = 300,
+    searchDebounce: Long = DEBOUNCE_DEFAULT,
     onGameDetailsClicked: (Int) -> Unit,
     onSettingsClicked: () -> Unit,
 ) {
@@ -94,12 +97,11 @@ private fun GameListContent(
 
     val showScrollToTop by remember {
         derivedStateOf {
-            lazyGridState.firstVisibleItemIndex > 4
+            lazyGridState.firstVisibleItemIndex > SHOW_TOP_AT_INDEX
         }
     }
 
     Box {
-
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -132,19 +134,11 @@ private fun GameListContent(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Box {
-                GamesList(
-                    lazyGridState = lazyGridState,
-                    gamesPagingItems = gamesPagingFlow,
-                    onGameClick = onGameDetailsClicked,
-                )
-                androidx.compose.animation.AnimatedVisibility(
-                    gamesPagingFlow.loadState.refresh is LoadState.Loading,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                ) {
-                    LoadingIndicator()
-                }
-            }
+            GamesList(
+                lazyGridState = lazyGridState,
+                gamesPagingItems = gamesPagingFlow,
+                onGameClick = onGameDetailsClicked,
+            )
         }
         val scope = rememberCoroutineScope()
         AnimatedVisibility(
