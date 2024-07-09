@@ -103,6 +103,9 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.bundles.coil)
 
+    // Paging
+    implementation(libs.bundles.androidx.paging)
+
     // Database
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)

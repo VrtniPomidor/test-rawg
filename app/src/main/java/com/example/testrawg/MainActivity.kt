@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(bottom = innerPadding.calculateBottomPadding())
+                            .padding(innerPadding)
                     ) {
                         AppNavHost()
                     }

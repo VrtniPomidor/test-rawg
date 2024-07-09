@@ -1,7 +1,9 @@
 package com.example.testrawg.di
 
+import com.example.testrawg.data.repository.GamesRepositoryImpl
 import com.example.testrawg.data.repository.GenresRepositoryImpl
 import com.example.testrawg.data.repository.UserDataRepositoryImpl
+import com.example.testrawg.domain.repository.GamesRepository
 import com.example.testrawg.domain.repository.GenresRepository
 import com.example.testrawg.domain.repository.UserDataRepository
 import dagger.Binds
@@ -21,6 +23,12 @@ interface DataModule {
     @Binds
     @Singleton
     fun bindsGenresRepository(
-        userDataRepository: GenresRepositoryImpl,
+        genresRepository: GenresRepositoryImpl,
     ): GenresRepository
+
+    @Binds
+    @Singleton
+    fun bindsGamesRepository(
+        gamesRepository: GamesRepositoryImpl,
+    ): GamesRepository
 }

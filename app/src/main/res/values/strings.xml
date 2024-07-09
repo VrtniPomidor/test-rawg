@@ -15,4 +15,7 @@
     <string name="retry_button_text">Retry</string>
     <string name="reset_onboarding_button_text">Reset Onboarding</string>
     <string name="games_list_title">Games List</string>
+    <string name="search_icon_content_description">Search</string>
+    <string name="search_clear_search_text_content_description">Search clear content</string>
+    <string name="go_to_top_button">Top</string>
 </resources>
