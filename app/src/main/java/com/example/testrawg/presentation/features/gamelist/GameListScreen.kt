@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -48,6 +49,7 @@ import com.example.testrawg.domain.model.Game
 import com.example.testrawg.domain.model.Genre
 import com.example.testrawg.presentation.components.ChipsView
 import com.example.testrawg.presentation.components.DynamicAsyncImage
+import com.example.testrawg.presentation.components.EmptyView
 import com.example.testrawg.presentation.components.ErrorView
 import com.example.testrawg.presentation.components.LoadingIndicator
 import com.example.testrawg.presentation.components.SearchTextField
@@ -189,11 +191,7 @@ private fun SharedTransitionScope.GamesList(
     ) {
         gamesPagingItems.apply {
             if (!isRefreshState()) {
-                items(
-                    count = itemCount,
-                    key = { this[it]?.id ?: -1 }
-                ) { index ->
-                    val game = this@apply[index]
+                gamesListSuccessContent(this) { game ->
                     GameCard(
                         animatedVisibilityScope = animatedVisibilityScope,
                         name = game?.name ?: "",
@@ -207,7 +205,7 @@ private fun SharedTransitionScope.GamesList(
 
             when {
                 loadState.refresh is LoadState.Loading -> {
-                    item { LoadingIndicator() }
+                    item(span = StaggeredGridItemSpan.FullLine) { LoadingIndicator() }
                 }
 
                 loadState.refresh is LoadState.Error -> {
@@ -215,7 +213,7 @@ private fun SharedTransitionScope.GamesList(
                 }
 
                 loadState.append is LoadState.Loading -> {
-                    item { LoadingIndicator() }
+                    item(span = StaggeredGridItemSpan.FullLine) { LoadingIndicator() }
                 }
 
                 loadState.append is LoadState.Error -> {
@@ -226,10 +224,30 @@ private fun SharedTransitionScope.GamesList(
     }
 }
 
+/**
+ * Wraps empty item with list of items
+ */
+private fun LazyStaggeredGridScope.gamesListSuccessContent(
+    lazyPagingItems: LazyPagingItems<Game>,
+    content: @Composable (Game?) -> Unit
+) {
+    if (lazyPagingItems.itemCount == 0) {
+        item(span = StaggeredGridItemSpan.FullLine) { EmptyView() }
+    } else {
+        items(
+            count = lazyPagingItems.itemCount,
+            key = { lazyPagingItems[it]?.id ?: -1 }
+        ) { index ->
+            val game = lazyPagingItems[index]
+            content(game)
+        }
+    }
+}
+
 private fun LazyStaggeredGridScope.showErrorView(
     lazyPagingItems: LazyPagingItems<Game>
 ) {
-    item {
+    item(span = StaggeredGridItemSpan.FullLine) {
         ErrorView(retry = { lazyPagingItems.retry() })
     }
 }

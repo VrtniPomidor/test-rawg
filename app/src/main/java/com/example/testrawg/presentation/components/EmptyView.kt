@@ -3,10 +3,11 @@ package com.example.testrawg.presentation.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,27 +18,26 @@ import androidx.compose.ui.unit.dp
 import com.example.testrawg.R
 
 @Composable
-fun ErrorView(
+fun EmptyView(
     modifier: Modifier = Modifier,
-    errorMessage: String = stringResource(R.string.something_went_wrong_title),
-    retry: () -> Unit
+    message: String = stringResource(id = R.string.empty_label)
 ) {
     Column(
-        modifier = modifier
-            .wrapContentSize()
-            .heightIn(min = 240.dp),
+        modifier = modifier.wrapContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(errorMessage)
+        Icon(
+            modifier = Modifier.size(50.dp),
+            imageVector = Icons.Filled.Search,
+            contentDescription = null
+        )
         Spacer(modifier = Modifier.height(8.dp))
-        Button(modifier = Modifier.widthIn(min = 160.dp), onClick = retry) {
-            Text(stringResource(R.string.retry_button_text))
-        }
+        Text(message)
     }
 }
 
 @Preview
 @Composable
-private fun ErrorViewPreview() {
-    ErrorView(retry = {})
+private fun EmptyViewPreview() {
+    EmptyView()
 }

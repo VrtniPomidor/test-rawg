@@ -22,4 +22,5 @@
     <string name="description_label">Description:</string>
     <string name="metacritic_label">Metacritic: %s</string>
     <string name="release_date_label">Release date: %s</string>
+    <string name="empty_label">No Results Found.</string>
 </resources>

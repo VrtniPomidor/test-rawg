@@ -1,6 +1,8 @@
 package com.example.testrawg.presentation.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +31,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testrawg.R
 
@@ -122,5 +125,18 @@ fun SearchTextField(
     }
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+}
+
+@Preview
+@Composable
+private fun SearchTextFieldPreview() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        SearchTextField(
+            searchQuery = "Initial Search",
+            onSearchQueryChanged = {},
+            onSearchTriggered = {},
+            onBack = {}
+        )
     }
 }
