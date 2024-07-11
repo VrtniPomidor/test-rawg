@@ -21,9 +21,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
@@ -52,6 +49,7 @@ import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.EmptyView
 import com.example.testrawg.presentation.components.ErrorView
 import com.example.testrawg.presentation.components.LoadingIndicator
+import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.SearchTextField
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.GameList
@@ -131,16 +129,12 @@ private fun SharedTransitionScope.GameListContent(
                 TitleBar(
                     modifier = Modifier,
                     title = stringResource(id = R.string.games_list_title),
-                    actionIcon = Icons.Filled.Settings,
-                    actionIconContentDescription = stringResource(
-                        id = R.string.settings_icon_content_description
+                    navigationItem = MenuItem.Search(
+                        onClick = { uiActions(showSearch()) }
                     ),
-                    onActionClick = onSettingsClicked,
-                    onNavigationClick = { uiActions(showSearch()) },
-                    navigationIcon = Icons.Rounded.Search,
-                    navigationIconContentDescription = stringResource(
-                        id = R.string.search_icon_content_description
-                    )
+                    actionItem = MenuItem.Settings(
+                        onClick = onSettingsClicked
+                    ),
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))

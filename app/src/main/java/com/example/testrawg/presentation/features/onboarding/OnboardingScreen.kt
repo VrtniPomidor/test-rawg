@@ -11,9 +11,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
@@ -35,6 +32,8 @@ import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.EmptyView
 import com.example.testrawg.presentation.components.ErrorView
 import com.example.testrawg.presentation.components.LoadingIndicator
+import com.example.testrawg.presentation.components.MenuItem
+import com.example.testrawg.presentation.components.RawgIcons
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.Onboarding
 
@@ -46,7 +45,8 @@ fun NavController.navigateToGenreSettingsScreen(navOptions: NavOptions? = null) 
 
 @Composable
 fun OnboardingScreen(
-    onFinishOnboarding: () -> Unit
+    onFinishOnboarding: () -> Unit,
+    isOnboarding: Boolean = false,
 ) {
     val viewModel: OnboardingViewModel = hiltViewModel()
     val genresState by viewModel.genresUiState.collectAsStateWithLifecycle()
@@ -59,6 +59,7 @@ fun OnboardingScreen(
             viewModel.onFinishOnboarding()
             onFinishOnboarding()
         },
+        isOnboarding = isOnboarding,
         onRetry = viewModel::getGenres
     )
 }
@@ -66,6 +67,7 @@ fun OnboardingScreen(
 @Composable
 fun OnboardingContent(
     genresState: OnboardingState,
+    isOnboarding: Boolean,
     isFinishEnabled: Boolean,
     onGenreSelect: (Int, Boolean) -> Unit,
     onFinishOnboarding: () -> Unit,
@@ -74,9 +76,16 @@ fun OnboardingContent(
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        TitleBar(
+            stringResource(R.string.select_genres_you_are_interested_in_title),
+            navigationItem = if (!isOnboarding) {
+                MenuItem.Back(onClick = onFinishOnboarding)
+            } else {
+                null
+            },
+        )
         when (genresState) {
             OnboardingState.Error -> {
                 ErrorView(retry = onRetry)
@@ -87,16 +96,13 @@ fun OnboardingContent(
             }
 
             is OnboardingState.Success -> {
-                TitleBar(stringResource(R.string.select_genres_you_are_interested_in_title))
-                Spacer(modifier = Modifier.height(8.dp))
                 Box(modifier = Modifier.weight(1f)) {
                     GenresList(genres = genresState.genres, onGenreSelect = onGenreSelect)
                 }
-                Spacer(modifier = Modifier.height(8.dp))
                 AdaptiveButton(isEnabled = isFinishEnabled, onClick = onFinishOnboarding) {
                     Text(stringResource(id = R.string.done_button))
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -158,7 +164,7 @@ private fun GenresCard(
                 onCheckedChange = onGenreSelect,
                 icon = {
                     Icon(
-                        imageVector = Icons.Filled.Add,
+                        imageVector = RawgIcons.Add,
                         contentDescription = stringResource(
                             id = R.string.genres_follow_button_content_desc,
                         ),
@@ -166,7 +172,7 @@ private fun GenresCard(
                 },
                 checkedIcon = {
                     Icon(
-                        imageVector = Icons.Filled.Done,
+                        imageVector = RawgIcons.Done,
                         contentDescription = stringResource(
                             id = R.string.genres_unfollow_button_content_desc,
                         ),

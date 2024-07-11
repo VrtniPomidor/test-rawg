@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +36,7 @@ import com.example.testrawg.presentation.components.ChipsView
 import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.ErrorView
 import com.example.testrawg.presentation.components.LoadingIndicator
+import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.GameDetails
 
@@ -91,11 +90,7 @@ private fun SharedTransitionScope.GameDetailsContent(
         TitleBar(
             modifier = Modifier,
             title = title,
-            onNavigationClick = onBackClicked,
-            navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
-            navigationIconContentDescription = stringResource(
-                id = R.string.arrow_back_content_desc
-            )
+            navigationItem = MenuItem.Back(onClick = onBackClicked),
         )
         when (uiState) {
             is GameDetailsUiState.Success -> {

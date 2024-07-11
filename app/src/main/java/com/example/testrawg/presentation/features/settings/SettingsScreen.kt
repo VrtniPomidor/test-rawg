@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.testrawg.R
 import com.example.testrawg.presentation.components.AdaptiveButton
+import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.Settings
 
@@ -54,9 +53,9 @@ private fun SettingsContent(
     ) {
         TitleBar(
             stringResource(R.string.settings_screen_title),
-            navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
-            navigationIconContentDescription = stringResource(id = R.string.arrow_back_content_desc),
-            onNavigationClick = onBackClicked,
+            navigationItem = MenuItem.Back(
+                onClick = onBackClicked
+            ),
         )
 
         if (state.showResetOnboarding) {

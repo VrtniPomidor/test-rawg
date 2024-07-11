@@ -46,9 +46,11 @@ fun AppNavHost() {
             }
             composable<Onboarding> { backStackEntry ->
                 val args: Onboarding = backStackEntry.toRoute()
+                val isOnboarding = args.isOnboarding
                 OnboardingScreen(
+                    isOnboarding = isOnboarding,
                     onFinishOnboarding = {
-                        if (args.isOnboarding) {
+                        if (isOnboarding) {
                             navController.navigateToGameListScreen(navOptions = navOptions {
                                 popUpTo(args) {
                                     inclusive = true

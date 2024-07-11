@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +26,9 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testrawg.R
@@ -57,7 +55,7 @@ fun SearchTextField(
             onBack()
         }) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageVector = RawgIcons.ArrowBack,
                 contentDescription = stringResource(id = R.string.arrow_back_content_desc),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -70,7 +68,7 @@ fun SearchTextField(
             ),
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Rounded.Search,
+                    imageVector = RawgIcons.Search,
                     contentDescription = stringResource(
                         id = R.string.search_icon_content_description,
                     ),
@@ -85,7 +83,7 @@ fun SearchTextField(
                         },
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Close,
+                            imageVector = RawgIcons.Close,
                             contentDescription = stringResource(
                                 id = R.string.search_clear_search_text_content_description,
                             ),
@@ -95,11 +93,11 @@ fun SearchTextField(
                 }
             },
             onValueChange = {
-                if ("\n" !in it) onSearchQueryChanged(it)
+                if ("\n" !in it.text) onSearchQueryChanged(it.text)
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(8.dp)
                 .focusRequester(focusRequester)
                 .onKeyEvent {
                     if (it.key == Key.Enter) {
@@ -110,7 +108,10 @@ fun SearchTextField(
                     }
                 },
             shape = RoundedCornerShape(32.dp),
-            value = searchQuery,
+            value = TextFieldValue(
+                text = searchQuery,
+                selection = TextRange(searchQuery.length)
+            ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Search,
             ),
