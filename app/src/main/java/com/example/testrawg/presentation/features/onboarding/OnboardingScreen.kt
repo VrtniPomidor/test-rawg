@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -31,6 +32,7 @@ import com.example.testrawg.domain.model.Genre
 import com.example.testrawg.presentation.components.AdaptiveButton
 import com.example.testrawg.presentation.components.CustomIconToggleButton
 import com.example.testrawg.presentation.components.DynamicAsyncImage
+import com.example.testrawg.presentation.components.EmptyView
 import com.example.testrawg.presentation.components.ErrorView
 import com.example.testrawg.presentation.components.LoadingIndicator
 import com.example.testrawg.presentation.components.TitleBar
@@ -87,10 +89,7 @@ fun OnboardingContent(
             is OnboardingState.Success -> {
                 TitleBar(stringResource(R.string.select_genres_you_are_interested_in_title))
                 Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center,
-                ) {
+                Box(modifier = Modifier.weight(1f)) {
                     GenresList(genres = genresState.genres, onGenreSelect = onGenreSelect)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -116,14 +115,18 @@ private fun GenresList(
         verticalItemSpacing = 8.dp,
         state = state,
     ) {
-        genres.forEach { genre ->
-            item(key = genre.id) {
-                GenresCard(
-                    name = genre.name,
-                    imageUrl = genre.imageBackground,
-                    isFollowing = genre.isFollowed,
-                    onGenreSelect = { onGenreSelect(genre.id, it) }
-                )
+        if (genres.isEmpty()) {
+            item(span = StaggeredGridItemSpan.FullLine) { EmptyView() }
+        } else {
+            genres.forEach { genre ->
+                item(key = genre.id) {
+                    GenresCard(
+                        name = genre.name,
+                        imageUrl = genre.imageBackground,
+                        isFollowing = genre.isFollowed,
+                        onGenreSelect = { onGenreSelect(genre.id, it) }
+                    )
+                }
             }
         }
     }
