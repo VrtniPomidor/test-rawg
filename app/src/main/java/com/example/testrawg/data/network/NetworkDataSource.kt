@@ -13,4 +13,8 @@ interface NetworkDataSource {
         page: Int,
         pageSize: Int,
     ): PagingResponse<GamesResponse>
+
+    suspend fun getGameDetailsNetwork(
+        gameId: Long,
+    ): GamesResponse
 }

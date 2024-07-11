@@ -111,6 +111,10 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.dataStore)
 
+    // Animation
+    implementation(libs.androidx.animation)
+    implementation(libs.androidx.foundation)
+
     // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

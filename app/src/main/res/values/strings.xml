@@ -18,4 +18,8 @@
     <string name="search_icon_content_description">Search</string>
     <string name="search_clear_search_text_content_description">Search clear content</string>
     <string name="go_to_top_button">Top</string>
+    <string name="ratings_label">Rating: %s</string>
+    <string name="description_label">Description:</string>
+    <string name="metacritic_label">Metacritic: %s</string>
+    <string name="release_date_label">Release date: %s</string>
 </resources>

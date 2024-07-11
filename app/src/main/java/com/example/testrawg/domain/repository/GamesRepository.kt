@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface GamesRepository {
     fun getGames(query: String, followedGenres: List<Int>): Flow<PagingData<Game>>
+    fun getGameDetails(gameId: Long): Flow<Game>
 }

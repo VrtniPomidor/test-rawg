@@ -1,7 +1,10 @@
 package com.example.testrawg.presentation.features.gamelist
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,10 +60,12 @@ private const val SHOW_TOP_AT_INDEX = 4
 
 fun NavController.navigateToGameListScreen(navOptions: NavOptions) = navigate(GameList, navOptions)
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun GameListScreen(
+fun SharedTransitionScope.GameListScreen(
+    animatedVisibilityScope: AnimatedContentScope,
     searchDebounce: Long = DEBOUNCE_DEFAULT,
-    onGameDetailsClicked: (Int) -> Unit,
+    onGameDetailsClicked: (Long, String) -> Unit,
     onSettingsClicked: () -> Unit,
 ) {
     val viewModel: GameListViewModel =
@@ -73,6 +78,7 @@ fun GameListScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     GameListContent(
+        animatedVisibilityScope = animatedVisibilityScope,
         state = state,
         gamesPagingFlow = pagingDataFlow,
         onSettingsClicked = onSettingsClicked,
@@ -81,11 +87,13 @@ fun GameListScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun GameListContent(
+private fun SharedTransitionScope.GameListContent(
+    animatedVisibilityScope: AnimatedContentScope,
     gamesPagingFlow: LazyPagingItems<Game>,
     onSettingsClicked: () -> Unit,
-    onGameDetailsClicked: (Int) -> Unit,
+    onGameDetailsClicked: (Long, String) -> Unit,
     state: UiState,
     uiActions: (UiAction) -> Unit
 ) {
@@ -135,6 +143,7 @@ private fun GameListContent(
             }
             Spacer(modifier = Modifier.height(8.dp))
             GamesList(
+                animatedVisibilityScope = animatedVisibilityScope,
                 lazyGridState = lazyGridState,
                 gamesPagingItems = gamesPagingFlow,
                 onGameClick = onGameDetailsClicked,
@@ -144,11 +153,10 @@ private fun GameListContent(
         AnimatedVisibility(
             showScrollToTop,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp),
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 24.dp, end = 16.dp),
         ) {
             FloatingActionButton(
-                shape = FloatingActionButtonDefaults.extendedFabShape,
                 onClick = {
                     scope.launch {
                         lazyGridState.animateScrollToItem(0)
@@ -163,10 +171,12 @@ private fun GameListContent(
     }
 }
 
+@ExperimentalSharedTransitionApi
 @Composable
-private fun GamesList(
+private fun SharedTransitionScope.GamesList(
+    animatedVisibilityScope: AnimatedContentScope,
     gamesPagingItems: LazyPagingItems<Game>,
-    onGameClick: (Int) -> Unit,
+    onGameClick: (Long, String) -> Unit,
     lazyGridState: LazyStaggeredGridState
 ) {
     LazyVerticalStaggeredGrid(
@@ -185,10 +195,12 @@ private fun GamesList(
                 ) { index ->
                     val game = this@apply[index]
                     GameCard(
+                        animatedVisibilityScope = animatedVisibilityScope,
                         name = game?.name ?: "",
                         imageUrl = game?.imageBackground ?: "",
+                        imageKey = game?.imageKey ?: "",
                         genres = game?.genres ?: listOf(),
-                        onGameClick = { if (game != null) onGameClick(game.id) }
+                        onGameClick = { if (game != null) onGameClick(game.id, game.name) }
                     )
                 }
             }
@@ -222,11 +234,14 @@ private fun LazyStaggeredGridScope.showErrorView(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun GameCard(
+private fun SharedTransitionScope.GameCard(
+    animatedVisibilityScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     name: String,
     imageUrl: String,
+    imageKey: String,
     genres: List<Genre>,
     onGameClick: () -> Unit,
 ) {
@@ -235,8 +250,15 @@ private fun GameCard(
             DynamicAsyncImage(
                 modifier = Modifier
                     .width(80.dp)
-                    .height(60.dp),
-                imageUrl = imageUrl
+                    .height(60.dp)
+                    .sharedElement(
+                        state = rememberSharedContentState(
+                            key = imageKey
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    ),
+                imageUrl = imageUrl,
+                contentScale = ContentScale.Crop,
             )
         },
         headlineContent = {

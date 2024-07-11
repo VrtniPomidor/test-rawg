@@ -1,6 +1,5 @@
 package com.example.testrawg.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,28 +15,21 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter.State.Error
-import coil.compose.AsyncImagePainter.State.Loading
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 
 @Composable
 fun DynamicAsyncImage(
     modifier: Modifier = Modifier,
     imageUrl: String,
     contentDescription: String? = null,
+    contentScale: ContentScale = ContentScale.Fit,
     placeholder: Painter = painterResource(android.R.drawable.ic_dialog_info),
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
-    val imageLoader = rememberAsyncImagePainter(
-        model = imageUrl,
-        onState = { state ->
-            isLoading = state is Loading
-            isError = state is Error
-        },
-    )
+
     Box(
-        modifier = modifier,
+        modifier = Modifier,
         contentAlignment = Alignment.Center,
     ) {
         if (isLoading) {
@@ -49,9 +41,21 @@ fun DynamicAsyncImage(
                 color = MaterialTheme.colorScheme.tertiary,
             )
         }
-        Image(
-            contentScale = ContentScale.Fit,
-            painter = if (isError.not()) imageLoader else placeholder,
+        AsyncImage(
+            model = imageUrl,
+            onLoading = {
+                isLoading = true
+            },
+            onError = {
+                isError = true
+            },
+            onSuccess = {
+                isLoading = false
+                isError = false
+            },
+            error = placeholder,
+            modifier = modifier,
+            contentScale = contentScale,
             contentDescription = contentDescription,
         )
     }

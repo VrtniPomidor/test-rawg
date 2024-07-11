@@ -1,6 +1,9 @@
 package com.example.testrawg.presentation.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -18,55 +21,70 @@ import com.example.testrawg.presentation.features.settings.SettingsScreen
 import com.example.testrawg.presentation.features.settings.navigateToSettingsScreen
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = Controller) {
-        composable<Controller> {
-            val navOptions = navOptions {
-                popUpTo(Controller) {
-                    inclusive = true
-                }
-            }
-            ControllerScreen(
-                showOnboarding = {
-                    navController.navigateToOnboardingScreen(navOptions = navOptions)
-                },
-                showGamesList = {
-                    navController.navigateToGameListScreen(navOptions = navOptions)
-                }
-            )
-        }
-        composable<Onboarding> { backStackEntry ->
-            val args: Onboarding = backStackEntry.toRoute()
-            OnboardingScreen(
-                onFinishOnboarding = {
-                    if (args.isOnboarding) {
-                        navController.navigateToGameListScreen(navOptions = navOptions {
-                            popUpTo(args) {
-                                inclusive = true
-                            }
-                        })
-                    } else {
-                        navController.navigateUp()
+    SharedTransitionLayout(
+        modifier = Modifier,
+    ) {
+        NavHost(navController, startDestination = Controller) {
+            composable<Controller> {
+                val navOptions = navOptions {
+                    popUpTo(Controller) {
+                        inclusive = true
                     }
                 }
-            )
-        }
-        composable<GameList> {
-            GameListScreen(
-                onGameDetailsClicked = { navController.navigateToGameDetails(it) },
-                onSettingsClicked = { navController.navigateToSettingsScreen() }
-            )
-        }
-        composable<GameDetails> { backStackEntry ->
-            val args: GameDetails = backStackEntry.toRoute()
-            GameDetailsScreen(args.gameId, onBackClicked = { navController.navigateUp() })
-        }
-        composable<Settings> {
-            SettingsScreen(
-                onShowGenres = { navController.navigateToGenreSettingsScreen() },
-                onBackClicked = { navController.navigateUp() })
+                ControllerScreen(
+                    showOnboarding = {
+                        navController.navigateToOnboardingScreen(navOptions = navOptions)
+                    },
+                    showGamesList = {
+                        navController.navigateToGameListScreen(navOptions = navOptions)
+                    }
+                )
+            }
+            composable<Onboarding> { backStackEntry ->
+                val args: Onboarding = backStackEntry.toRoute()
+                OnboardingScreen(
+                    onFinishOnboarding = {
+                        if (args.isOnboarding) {
+                            navController.navigateToGameListScreen(navOptions = navOptions {
+                                popUpTo(args) {
+                                    inclusive = true
+                                }
+                            })
+                        } else {
+                            navController.navigateUp()
+                        }
+                    }
+                )
+            }
+            composable<GameList> {
+                GameListScreen(
+                    animatedVisibilityScope = this,
+                    onGameDetailsClicked = { id, name ->
+                        navController.navigateToGameDetails(
+                            gameId = id,
+                            gameName = name
+                        )
+                    },
+                    onSettingsClicked = { navController.navigateToSettingsScreen() }
+                )
+            }
+            composable<GameDetails> { backStackEntry ->
+                val args: GameDetails = backStackEntry.toRoute()
+                GameDetailsScreen(
+                    animatedVisibilityScope = this,
+                    gameId = args.gameId,
+                    gameName = args.gameName,
+                    onBackClicked = { navController.navigateUp() })
+            }
+            composable<Settings> {
+                SettingsScreen(
+                    onShowGenres = { navController.navigateToGenreSettingsScreen() },
+                    onBackClicked = { navController.navigateUp() })
+            }
         }
     }
 }
@@ -84,7 +102,8 @@ object GameList
 
 @Serializable
 data class GameDetails(
-    val gameId: Int,
+    val gameId: Long,
+    val gameName: String,
 )
 
 @Serializable
