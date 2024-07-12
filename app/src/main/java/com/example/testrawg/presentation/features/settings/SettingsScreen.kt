@@ -20,9 +20,10 @@ import com.example.testrawg.presentation.components.AdaptiveButton
 import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.Settings
+import com.example.testrawg.presentation.navigation.safeNavigate
 
 fun NavController.navigateToSettingsScreen(navOptions: NavOptions? = null) =
-    navigate(Settings, navOptions)
+    safeNavigate(Settings, navOptions)
 
 @Composable
 fun SettingsScreen(

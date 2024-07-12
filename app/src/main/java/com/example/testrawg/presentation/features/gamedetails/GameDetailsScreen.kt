@@ -40,12 +40,13 @@ import com.example.testrawg.presentation.components.LoadingIndicator
 import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.GameDetails
+import com.example.testrawg.presentation.navigation.safeNavigate
 
 fun NavController.navigateToGameDetails(
     gameId: Long,
     gameName: String,
     navOptions: NavOptions? = null
-) = navigate(GameDetails(gameId, gameName), navOptions)
+) = safeNavigate(GameDetails(gameId, gameName), navOptions)
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

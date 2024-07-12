@@ -56,12 +56,14 @@ import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.SearchTextField
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.GameList
+import com.example.testrawg.presentation.navigation.safeNavigate
 import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_DEFAULT = 500L
 private const val SHOW_TOP_AT_INDEX = 4
 
-fun NavController.navigateToGameListScreen(navOptions: NavOptions) = navigate(GameList, navOptions)
+fun NavController.navigateToGameListScreen(navOptions: NavOptions) =
+    safeNavigate(GameList, navOptions)
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
