@@ -42,8 +42,11 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.testrawg.R
+import com.example.testrawg.domain.model.ErrorType
 import com.example.testrawg.domain.model.Game
 import com.example.testrawg.domain.model.Genre
+import com.example.testrawg.domain.model.getResourceMessage
+import com.example.testrawg.domain.model.toErrorType
 import com.example.testrawg.presentation.components.ChipsView
 import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.EmptyView
@@ -197,22 +200,30 @@ private fun SharedTransitionScope.GamesList(
                 }
             }
 
-            when {
-                loadState.refresh is LoadState.Loading -> {
+            when (val currentState = loadState.refresh) {
+                is LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) { LoadingIndicator() }
                 }
 
-                loadState.refresh is LoadState.Error -> {
-                    showErrorView(this)
+                is LoadState.Error -> {
+                    val error = currentState.error.toErrorType()
+                    showErrorView(error, this)
                 }
 
-                loadState.append is LoadState.Loading -> {
+                is LoadState.NotLoading -> Unit
+            }
+
+            when (val currentState = loadState.append) {
+                LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) { LoadingIndicator() }
                 }
 
-                loadState.append is LoadState.Error -> {
-                    showErrorView(this)
+                is LoadState.Error -> {
+                    val error = currentState.error.toErrorType()
+                    showErrorView(error, this)
                 }
+
+                is LoadState.NotLoading -> Unit
             }
         }
     }
@@ -239,10 +250,13 @@ private fun LazyStaggeredGridScope.gamesListSuccessContent(
 }
 
 private fun LazyStaggeredGridScope.showErrorView(
+    errorType: ErrorType,
     lazyPagingItems: LazyPagingItems<Game>
 ) {
     item(span = StaggeredGridItemSpan.FullLine) {
-        ErrorView(retry = { lazyPagingItems.retry() })
+        ErrorView(
+            errorMessage = errorType.getResourceMessage(),
+            retry = { lazyPagingItems.retry() })
     }
 }
 

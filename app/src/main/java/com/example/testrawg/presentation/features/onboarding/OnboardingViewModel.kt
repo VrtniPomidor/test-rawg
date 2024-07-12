@@ -40,7 +40,7 @@ class OnboardingViewModel @Inject constructor(
                         is Result.Success -> OnboardingState.Success(genresResult.data)
 
                         is Result.Loading -> OnboardingState.Loading
-                        is Result.Error -> OnboardingState.Error
+                        is Result.Error -> OnboardingState.Error(genresResult.errorType)
                     }
                 }
         }.stateIn(

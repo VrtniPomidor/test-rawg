@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.testrawg.R
 import com.example.testrawg.domain.model.Genre
+import com.example.testrawg.domain.model.getResourceMessage
 import com.example.testrawg.presentation.components.AdaptiveButton
 import com.example.testrawg.presentation.components.CustomIconToggleButton
 import com.example.testrawg.presentation.components.DynamicAsyncImage
@@ -87,8 +88,11 @@ fun OnboardingContent(
             },
         )
         when (genresState) {
-            OnboardingState.Error -> {
-                ErrorView(retry = onRetry)
+            is OnboardingState.Error -> {
+                ErrorView(
+                    errorMessage = genresState.errorType.getResourceMessage(),
+                    retry = onRetry
+                )
             }
 
             OnboardingState.Loading -> {
