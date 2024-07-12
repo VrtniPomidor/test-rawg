@@ -48,7 +48,7 @@ class GameDetailsViewModel @AssistedInject constructor(
                 is Result.Success -> GameDetailsUiState.Success(it.data)
 
                 is Result.Loading -> GameDetailsUiState.Loading
-                is Result.Error -> GameDetailsUiState.Error
+                is Result.Error -> GameDetailsUiState.Error(it.errorType)
             }
         }
 

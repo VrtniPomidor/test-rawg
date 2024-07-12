@@ -63,12 +63,14 @@ class GameListViewModel @AssistedInject constructor(
             searches,
             genresRepository.getFollowedGenres(),
             ::Pair
-        ).debounce(debounceMs).flatMapLatest { (action, genres) ->
-            getGames(
-                queryString = action.query,
-                genres = genres
-            )
-        }.cachedIn(viewModelScope)
+        )
+            .debounce(debounceMs)
+            .flatMapLatest { (action, genres) ->
+                getGames(
+                    queryString = action.query,
+                    genres = genres
+                )
+            }.cachedIn(viewModelScope)
 
         state = combine(
             searches,

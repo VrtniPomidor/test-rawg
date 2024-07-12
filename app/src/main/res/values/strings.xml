@@ -11,7 +11,6 @@
     <string name="done_button">Done</string>
     <string name="settings_screen_title">Settings Screen</string>
     <string name="select_genres_you_are_interested_in_title">Select genres You are interested in</string>
-    <string name="something_went_wrong_title">Something went wrong!</string>
     <string name="retry_button_text">Retry</string>
     <string name="reset_onboarding_button_text">Reset Onboarding</string>
     <string name="games_list_title">Games List</string>
@@ -23,4 +22,13 @@
     <string name="metacritic_label">Metacritic: %s</string>
     <string name="release_date_label">Release date: %s</string>
     <string name="empty_label">No Results Found.</string>
+
+    <!--  Error messages  -->
+    <string name="something_went_wrong_error_message">Something went wrong!</string>
+    <string name="data_corrupted_error_message">Something went wrong! Maybe Data Got Corrupted.</string>
+    <string name="bad_gateway_error_message">Bad gateway: 502\nPlease wait a moment before retrying</string>
+    <string name="error_with_code_error_message">We Encountered an Error: %d</string>
+    <string name="service_unavailable_error_message">Service Unavailable: %d</string>
+    <string name="server_error_message">Server Error, Please try again later.</string>
+    <string name="not_found_error_message">Error, Not Found: 404</string>
 </resources>

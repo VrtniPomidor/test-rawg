@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.testrawg.R
+import com.example.testrawg.domain.model.getResourceMessage
 import com.example.testrawg.presentation.components.ChipsView
 import com.example.testrawg.presentation.components.DynamicAsyncImage
 import com.example.testrawg.presentation.components.ErrorView
@@ -98,9 +99,10 @@ private fun SharedTransitionScope.GameDetailsContent(
                 SuccessState(animatedVisibilityScope, uiState)
             }
 
-            GameDetailsUiState.Error -> ErrorView {
-                uiActions(GameDetailsUiActions.Retry)
-            }
+            is GameDetailsUiState.Error -> ErrorView(
+                errorMessage = uiState.errorType.getResourceMessage(),
+                retry = { uiActions(GameDetailsUiActions.Retry) }
+            )
 
             GameDetailsUiState.Loading -> LoadingIndicator()
         }
