@@ -37,12 +37,13 @@ import com.example.testrawg.presentation.components.MenuItem
 import com.example.testrawg.presentation.components.RawgIcons
 import com.example.testrawg.presentation.components.TitleBar
 import com.example.testrawg.presentation.navigation.Onboarding
+import com.example.testrawg.presentation.navigation.safeNavigate
 
 fun NavController.navigateToOnboardingScreen(navOptions: NavOptions? = null) =
-    navigate(Onboarding(isOnboarding = true), navOptions)
+    safeNavigate(Onboarding(isOnboarding = true), navOptions)
 
 fun NavController.navigateToGenreSettingsScreen(navOptions: NavOptions? = null) =
-    navigate(Onboarding(isOnboarding = false), navOptions)
+    safeNavigate(Onboarding(isOnboarding = false), navOptions)
 
 @Composable
 fun OnboardingScreen(

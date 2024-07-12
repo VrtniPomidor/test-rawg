@@ -4,6 +4,10 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,7 +23,6 @@ import com.example.testrawg.presentation.features.onboarding.navigateToGenreSett
 import com.example.testrawg.presentation.features.onboarding.navigateToOnboardingScreen
 import com.example.testrawg.presentation.features.settings.SettingsScreen
 import com.example.testrawg.presentation.features.settings.navigateToSettingsScreen
-import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -57,7 +60,7 @@ fun AppNavHost() {
                                 }
                             })
                         } else {
-                            navController.navigateUp()
+                            navController.safeNavigateUp()
                         }
                     }
                 )
@@ -80,33 +83,30 @@ fun AppNavHost() {
                     animatedVisibilityScope = this,
                     gameId = args.gameId,
                     gameName = args.gameName,
-                    onBackClicked = { navController.navigateUp() })
+                    onBackClicked = { navController.safeNavigateUp() })
             }
             composable<Settings> {
                 SettingsScreen(
-                    onShowGenres = { navController.navigateToGenreSettingsScreen() },
-                    onBackClicked = { navController.navigateUp() })
+                    onShowGenres = {
+                        navController.navigateToGenreSettingsScreen()
+                    },
+                    onBackClicked = { navController.safeNavigateUp() })
             }
         }
     }
 }
 
-@Serializable
-object Controller
+fun <T : Any> NavController.safeNavigate(route: T, navOptions: NavOptions? = null) {
+    if (currentBackStackEntry?.lifecycleIsResumed() == true) {
+        navigate(route, navOptions)
+    }
+}
 
-@Serializable
-data class Onboarding(
-    val isOnboarding: Boolean
-)
+private fun NavController.safeNavigateUp() {
+    if (currentBackStackEntry?.lifecycleIsResumed() == true) {
+        navigateUp()
+    }
+}
 
-@Serializable
-object GameList
-
-@Serializable
-data class GameDetails(
-    val gameId: Long,
-    val gameName: String,
-)
-
-@Serializable
-object Settings
+private fun NavBackStackEntry.lifecycleIsResumed() =
+    this.lifecycle.currentState == Lifecycle.State.RESUMED
